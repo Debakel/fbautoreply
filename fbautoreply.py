@@ -28,57 +28,21 @@ else:
 
 
 class EchoBot(sleekxmpp.ClientXMPP):
-
-    """
-    A simple SleekXMPP bot that will echo messages it
-    receives, along with a short thank you message.
-    """
-
-    def __init__(self, jid, password):
+    def __init__(self, username, password, answer):
+        self.answer = answer
+        jid = username + '@chat.facebook.com'
         sleekxmpp.ClientXMPP.__init__(self, jid, password)
-
-        # The session_start event will be triggered when
-        # the bot establishes its connection with the server
-        # and the XML streams are ready for use. We want to
-        # listen for this event so that we we can initialize
-        # our roster.
+        
         self.add_event_handler("session_start", self.start)
-
-        # The message event is triggered whenever a message
-        # stanza is received. Be aware that that includes
-        # MUC messages and error messages.
         self.add_event_handler("message", self.message)
 
-    def start(self, event):
-        """
-        Process the session_start event.
-
-        Typical actions for the session_start event are
-        requesting the roster and broadcasting an initial
-        presence stanza.
-
-        Arguments:
-            event -- An empty dictionary. The session_start
-                     event does not provide any additional
-                     data.
-        """
+    def start(self, event):  
         self.send_presence()
         self.get_roster()
 
     def message(self, msg):
-        """
-        Process incoming message stanzas. Be aware that this also
-        includes MUC messages and error messages. It is usually
-        a good idea to check the messages's type before processing
-        or sending replies.
-
-        Arguments:
-            msg -- The received message stanza. See the documentation
-                   for stanza objects and the Message stanza to see
-                   how it may be used.
-        """
         if msg['type'] in ('chat', 'normal'):
-            msg.reply("Thanks for sending\n%(body)s" % msg).send()
+            msg.reply(self.answer).send()
 
 
 if __name__ == '__main__':
@@ -101,7 +65,8 @@ if __name__ == '__main__':
                     help="JID to use")
     optp.add_option("-p", "--password", dest="password",
                     help="password to use")
-
+    optp.add_option("-a", "--answer", dest="answer",
+                    help="autoreply message to use")
     opts, args = optp.parse_args()
 
     # Setup logging.
@@ -112,11 +77,12 @@ if __name__ == '__main__':
         opts.jid = raw_input("Username: ")
     if opts.password is None:
         opts.password = getpass.getpass("Password: ")
-
+    if opts.answer is None:
+        opts.answer = raw_input("Autoreply nessage: ")
     # Setup the EchoBot and register plugins. Note that while plugins may
     # have interdependencies, the order in which you register them does
     # not matter.
-    xmpp = EchoBot(opts.jid, opts.password)
+    xmpp = EchoBot(opts.jid, opts.password, opts.answer)
     xmpp.register_plugin('xep_0030') # Service Discovery
     xmpp.register_plugin('xep_0004') # Data Forms
     xmpp.register_plugin('xep_0060') # PubSub
