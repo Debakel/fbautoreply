@@ -1,8 +1,14 @@
 fbautoreply
 ===========
 
-Autoreply bot for facebook
+Autoreply bot for facebook based on SleekXMPP
 
+Requirements
+------------
+Get SleekXMPP from PyPI::
 
-== Usage ==
-./fbautoreply.py -u USERNAME -p PASSWPRD -m ANSWER
+    pip install sleekxmpp
+
+Usage
+-----
+./fbautoreply.py -u "Username" -p "Password" -m "Message to reply"
