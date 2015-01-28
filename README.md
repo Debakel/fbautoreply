@@ -5,10 +5,8 @@ Autoreply bot for facebook based on SleekXMPP
 
 Requirements
 ------------
-Get SleekXMPP from PyPI::
-
-    pip install sleekxmpp
+* SleekXMPP `pip install sleekxmpp`
 
 Usage
 -----
-./fbautoreply.py -u "Username" -p "Password" -m "Message to reply"
+    $ python fbautoreply.py -u "Username" -p "Password" -m "Hello World!"
